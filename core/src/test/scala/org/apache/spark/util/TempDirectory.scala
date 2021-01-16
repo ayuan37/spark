@@ -15,27 +15,35 @@
  * limitations under the License.
  */
 
-package org.apache.spark.sql.catalyst.util
+package org.apache.spark.util
 
-object SQLOrderingUtil {
+import java.io.File
+
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.Suite
+
+/**
+ * Trait that creates a temporary directory before each test and deletes it after the test.
+ */
+trait TempDirectory extends BeforeAndAfterEach { self: Suite =>
+
+  private var _tempDir: File = _
 
   /**
-   * A special version of double comparison that follows SQL semantic:
-   *  1. NaN == NaN
-   *  2. NaN is greater than any non-NaN double
-   *  3. -0.0 == 0.0
+   * Returns the temporary directory as a `File` instance.
    */
-  def compareDoubles(x: Double, y: Double): Int = {
-    if (x == y) 0 else java.lang.Double.compare(x, y)
+  protected def tempDir: File = _tempDir
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    _tempDir = Utils.createTempDir(namePrefix = this.getClass.getName)
   }
 
-  /**
-   * A special version of float comparison that follows SQL semantic:
-   *  1. NaN == NaN
-   *  2. NaN is greater than any non-NaN float
-   *  3. -0.0 == 0.0
-   */
-  def compareFloats(x: Float, y: Float): Int = {
-    if (x == y) 0 else java.lang.Float.compare(x, y)
+  override def afterEach(): Unit = {
+    try {
+      Utils.deleteRecursively(_tempDir)
+    } finally {
+      super.afterEach()
+    }
   }
 }

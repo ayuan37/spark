@@ -78,8 +78,9 @@ streaming-tests.log
 target/
 unit-tests.log
 work/
+.credentials
+dev/pr-deps
 docs/.jekyll-metadata
-docs/.jekyll-cache
 
 # For Hive
 TempStatsStore/
