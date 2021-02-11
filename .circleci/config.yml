@@ -165,7 +165,7 @@ jobs:
             - m2-cache-v1-{{ .Branch }}-{{ checksum "/tmp/pom_checksums.txt" }}
             - m2-cache-v1-{{ .Branch }}-
             - m2-cache-v1-
-      - run: ./build/mvn -DskipTests -Psparkr install
+      - run: ./build/mvn -T 4 -DskipTests -Psparkr install
       # Get sbt to run trivially, ensures its launcher is downloaded under build/
       - run: ./build/sbt -h || true
       - *cache-build-tools
