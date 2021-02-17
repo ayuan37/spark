@@ -15,23 +15,18 @@
  * limitations under the License.
  */
 
-package org.apache.spark.util.collection.unsafe.sort;
+package org.apache.spark.deploy
 
-import java.io.IOException;
+import org.apache.spark.{SparkConf, SparkFunSuite}
 
-public abstract class UnsafeSorterIterator {
+class CondaRunnerSuite extends SparkFunSuite {
 
-  public abstract boolean hasNext();
+  test("correctly reads conda env vars") {
+    val conf = new SparkConf
+    conf.set("spark.conda.env.key1", "value1")
+    conf.set("spark.conda.env.key2", "value2")
+    val expected = Map("key1" -> "value1", "key2" -> "value2")
+    assert(CondaRunner.extractEnvVariables(conf) == expected)
+  }
 
-  public abstract void loadNext() throws IOException;
-
-  public abstract Object getBaseObject();
-
-  public abstract long getBaseOffset();
-
-  public abstract int getRecordLength();
-
-  public abstract long getKeyPrefix();
-
-  public abstract int getNumRecords();
 }

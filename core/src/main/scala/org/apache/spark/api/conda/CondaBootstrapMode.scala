@@ -14,24 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.spark.api.conda
 
-package org.apache.spark.util.collection.unsafe.sort;
+/**
+ * Determines the conda create mode run to bootstrap the conda environment.
+ */
+sealed trait CondaBootstrapMode
 
-import java.io.IOException;
+object CondaBootstrapMode {
 
-public abstract class UnsafeSorterIterator {
+  /**
+   * Solve mode runs conda create using the SAT solver.
+   */
+  case object Solve extends CondaBootstrapMode
 
-  public abstract boolean hasNext();
+  /**
+   * File mode runs conda create using a spec file that specifies the package urls to install.
+   */
+  case object File extends CondaBootstrapMode
 
-  public abstract void loadNext() throws IOException;
+  def fromString(value: String): CondaBootstrapMode = {
+    values().find(_.toString == value).getOrElse(
+      throw new IllegalArgumentException(
+        s"Unable to construct CondaBootStrapMode from string $value"))
+  }
 
-  public abstract Object getBaseObject();
-
-  public abstract long getBaseOffset();
-
-  public abstract int getRecordLength();
-
-  public abstract long getKeyPrefix();
-
-  public abstract int getNumRecords();
+  def values(): Vector[CondaBootstrapMode] = {
+    Vector(Solve, File)
+  }
 }
